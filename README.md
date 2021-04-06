@@ -2,7 +2,7 @@
 Checkers solving AI written in javascript using Minimax and Alpha Beta Pruning
 
 
-CURRENTLY: WORK IN PROGRESS
+CURRENTLY: WORK IN PROGRESS - is not an effective AI
 
 Can currently be played here:
 https://3tzzw.csb.app/
