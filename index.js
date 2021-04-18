@@ -1,21 +1,6 @@
 import p5 from "p5";
 import { computerMove } from "./ai.js";
 
-/*
- * CHANGES BRANDON WANG MADE SINCE YESTERDAY:
- * - drawing a star (kingCorners and beginShape)
- * - taking out constants and methods outside
- *   of let sketch = function (p)
- *   - making it global makes it easier for ai.js to call them!
- * - getting the reset button to work properly
- * - updating squareSize, pieceSize, and boardSize as the size of
- *   the browser window changes (see the beginning of the draw() function)
- * - changeTurn takes in a parameter and returns a boolean; instead of
- *   updating the global turn variable
- */
-
-/* GLOBAL VARIABLES */
-
 let squareSize = 80; // 60
 let pieceSize = 60; // 45
 const boardPieces = 8;
@@ -206,7 +191,6 @@ let sketch = function (p) {
       ];
     }
 
-    //print_board(board);
     selected = null;
     validList = [];
     turn = 1;
