@@ -16,23 +16,13 @@ const pieceTypes = {
   blackKing: 4
 };
 
-//TO DO: ADD MULTIJUMP
-//PROJECT END GAME
-//FIX STRUCTURE TO ANALYZE PIECES, NOT THE WHOLE BOARD
-//OPTIMIZE
-console.log = function () {};
-// Random AI to test AI movement
 export function computerMove(validMoves, copyBoard, color) {
   let redList = extractColor(1, copyBoard);
   let blackList = extractColor(2, copyBoard);
 
   let max = true;
   let minmaxValue = max === true ? -1000 : 1000;
-  let move;
-
-  console.log("minmaxValue at computerMove", minmaxValue);
-  console.log("Current board: ");
-  print_board(copyBoard);
+  let move = validMoves[0];
 
   validMoves.forEach((element) => {
     let board = copy(copyBoard);
@@ -46,36 +36,39 @@ export function computerMove(validMoves, copyBoard, color) {
     );
 
     let newBoard = updatedSet[0];
+    let multijump = updatedSet[1];
 
-    console.log("Board at first depth valid move: ");
-    //print_board(newBoard);
+    let value;
 
-    let value = minimax(
-      copy(newBoard),
-      redList,
-      blackList,
-      depth,
-      color,
-      false,
-      minmaxValue,
-      [false]
-    );
+    if (multijump) {
+      value = minimax(
+        copy(newBoard),
+        redList,
+        blackList,
+        depth,
+        color,
+        true,
+        minmaxValue,
+        [true, element[2], element[3]]
+      );
+    } else {
+      value = minimax(
+        copy(newBoard),
+        redList,
+        blackList,
+        depth - 1,
+        color,
+        false,
+        minmaxValue,
+        [false]
+      );
+    }
 
-    console.log(
-      "DEPTH TOP: Current value: ",
-      value,
-      " / minimaxValue: ",
-      minmaxValue
-    );
     if (value > minmaxValue) {
       minmaxValue = value;
       move = element;
-      console.log("Move is set to new value: ", minmaxValue, move);
     }
-    console.log("______________________________");
   });
-  console.log("Chosen Move Value: ", minmaxValue, ", Move: ", move);
-  console.log("______________________________");
   return move;
 }
 
@@ -104,25 +97,8 @@ function minimax(
   currentlyMultijump
 ) {
   if (depth === 1) {
-    console.log("BOTTOM DEPTH REACHED FOR BOARD: ");
-    print_board(board);
     return evaluateBoard(board, color);
   } else {
-    console.log("Current board AT LEVEL: ", depth);
-    print_board(board);
-
-    console.log(
-      "BOARD DATA: ",
-      "depth",
-      depth,
-      "max",
-      max,
-      "valueAbove",
-      valueAbove,
-      "multijump",
-      currentlyMultijump
-    );
-
     let maxNext = max === true ? false : true;
     //loop through each move in valid list
     //track min / max
@@ -146,8 +122,6 @@ function minimax(
           element[1]
         ])
       );
-
-      console.log("MULTIJUMP ENTERED");
     } else {
       moves = allMoves(
         board,
@@ -155,9 +129,10 @@ function minimax(
         blackList,
         max === true ? color : oppositeColor
       );
+      if (moves.length === 0) {
+        return max === true ? -1000 : 1000;
+      }
     }
-
-    console.log("MOVES IDENTIFIED: ", moves.length);
 
     let minmaxValue = max === true ? -1000 : 1000;
     moves.forEach((element) => {
@@ -219,11 +194,7 @@ function minimax(
           return minmaxValue;
         }
       }
-
-      console.log("______________________________");
     });
-
-    console.log("______________________________");
     return minmaxValue;
   }
 }
@@ -244,30 +215,8 @@ function evaluateBoard(board, color) {
       score += val * sign;
     }
   }
-  console.log("SCORE", score);
-  console.log("______________________________");
   return score;
 }
-/*
-function allMoves(board, redList, blackList, color) {
-  let allMovesList = [];
-  let list = color === 1 ? redList : blackList;
-  list.forEach((element) => {
-    let toMove = validMoves(
-      board[element[0]][element[1]],
-      element[0],
-      element[1],
-      board,
-      false
-    );
-    toMove.forEach((element2) =>
-      allMovesList.push([element[0], element[1], element2[0], element2[1]])
-    );
-  });
-  return allMovesList;
-}
-*/
-
 const allMoves = (board, redList, blackList, color) => {
   let allMovesList = [];
   for (let i = 0; i < board.length; i++) {
